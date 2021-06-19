@@ -36,7 +36,6 @@ public class AppControl {
 	 
 	@RequestMapping("/Howli")
 	public String Success() {
-		System.out.println("testing");
 		return "Success.html";
 	}
 
