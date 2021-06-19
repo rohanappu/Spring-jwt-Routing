@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<form>
+<input type="text" name="username" id="emailid"><br>
+<input type="text" name="password" id="password"><br>
+</form>
+<button onclick="myCall()">Submit</button>
+<script type="text/javascript">
+function myCall(){
+	var email=document.getElementById("emailid").value;
+	var pwd=document.getElementById("password").value;
+	axios.post('http://localhost:8080/authenticate',{
+		'username':email,
+		'password':pwd
+	},{headers: {
+        "Content-Type": undefined}
+    }).then(
+			(response) => {
+				var result=response.data;
+				console.log(result.jwt);
+				//Nunu(result.jwt);
+				sessionStorage.setItem("jwt", result.jwt);
+				SetupToken(CreateJWTToken(result.jwt));
+				getNextpage(result.jwt);
+				
+			},
+			(error) =>{
+				console.log(error);
+			});
+	
+	
+}
+//,{
+//headers: {
+//Authorization: `Bearer ${jwt}` 
+//},
+function SetupToken(jwt){
+	console.log("nunu",jwt);
+	/*axios.interceptors.request.use(
+	(config) => {
+		config.headers.authorization= jwt
+		return config;
+		
+	}
+	
+	)*/
+	
+	axios.interceptors.request.use((config) => {
+		  config.headers.authorization = jwt;
+	    return config;
+	});
+	
+}
+	function CreateJWTToken(token){
+		return 'Bearer ' + token;
+	}
+/*	
+	let a =`Bearer ${jwt}`;
+	console.log(a);
+	axios.get('/s',{headers: {
+		"Authorization": a  }
+	}).then(
+			(response) => {
+				
+			},
+			(error) =>{
+				
+			});
+}*/
+
+function getNextpage(jwt){
+	var s = CreateJWTToken(jwt);
+	axios.get('http://localhost:8080/Howli');
+	
+}
+
+</script>
+</body>
+</html>
